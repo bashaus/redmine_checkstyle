@@ -16,9 +16,6 @@ class CheckstyleController < ApplicationController
     begin
       # Load the XML file
       @report = XML::Document.file(checkstyle_filename)
-
-      @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-      @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
     rescue Exception => e  
       @error = e.message
     end

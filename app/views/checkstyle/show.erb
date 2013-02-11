@@ -1,28 +1,32 @@
-<% content_for :sidebar do %>  
-	<% if @severity_count.size != 0 then %>
-		<h3>Number of errors by severity</h3>
-		<% @severity_count.each do |severity| %>
-			<%= severity[:name].capitalize %> <span class="count">(<%= Integer(severity[:count]) %>)</span><br />
-		<% end %>
-	<% end %>
-
-	<% if @source_count.size != 0 then %>
-		<h3>Number of errors by source</h3>
-		<% @source_count.each do |source| %>
-			<%= source[:name] %> <span class="count">(<%= Integer(source[:count]) %>)</span><br />
-		<% end %>
-	<% end %>
-<% end %>
-
 <h2>Coding</h2>
 
 <%= @error %>
 
 <%=
 if !@report.nil? then
-	case @report.root.attributes['version']
-	when "1.4.4"
-		render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
-	end
+  case @report.root.attributes['version']
+  when "1.4.4"
+    @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+    @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+    render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
+  else
+    "Don't know how to output checkstyle report version #{@report.root.attributes['version']}"
+  end
 end
 %>
+
+<% content_for :sidebar do %>  
+  <% if @severity_count.size != 0 then %>
+    <h3>Number of errors by severity</h3>
+    <% @severity_count.each do |severity| %>
+      <%= severity[:name].capitalize %> <span class="count">(<%= Integer(severity[:count]) %>)</span><br />
+    <% end %>
+  <% end %>
+
+  <% if @source_count.size != 0 then %>
+    <h3>Number of errors by source</h3>
+    <% @source_count.each do |source| %>
+      <%= source[:name] %> <span class="count">(<%= Integer(source[:count]) %>)</span><br />
+    <% end %>
+  <% end %>
+<% end %>
