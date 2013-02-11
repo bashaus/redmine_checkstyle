@@ -1,4 +1,8 @@
-<% files = @report.find('/checkstyle/file') %>
+<%
+files = @report.find('/checkstyle/file')
+@severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+@source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+%>
 
 <% if files.length == 0 %>
 	<span class="icon icon-checked">Code quality passed</span>

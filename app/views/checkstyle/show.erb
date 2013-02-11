@@ -6,8 +6,6 @@
 if !@report.nil? then
   case @report.root.attributes['version']
   when "1.4.4"
-    @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-    @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
     render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
   else
     "Don't know how to output checkstyle report version #{@report.root.attributes['version']}"
