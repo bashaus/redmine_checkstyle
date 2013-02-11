@@ -1,4 +1,4 @@
-require "xslt"
+require "xml"
 
 class CheckstyleController < ApplicationController
   unloadable
@@ -6,6 +6,7 @@ class CheckstyleController < ApplicationController
   before_filter :find_project, :authorize
 
   def show
+    @report = nil
     @severity_count = {}
     @source_count = {}
 
@@ -16,23 +17,10 @@ class CheckstyleController < ApplicationController
     else
       begin
         # Load the XML file
-        stylesheet = XML::Document.file("vendor/plugins/redmine_checkstyle/app/views/checkstyle/list.xsl")
-        xml_doc = XML::Document.file(checkstyle_filename)
+        @report = XML::Document.file(checkstyle_filename)
 
-        @severity_count = xml_doc.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-        @source_count = xml_doc.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-      end
-
-      begin
-        sheet = XSLT::Stylesheet.new(stylesheet)
-
-        # output to StdOut
-        sheet.apply( xml_doc )
-
-        # output to 'str'
-        @error_list = sheet.apply( xml_doc ).to_s
-      rescue
-        @error_list = "Could not parse xml to stylesheet"
+        @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+        @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
       end
     end
   end

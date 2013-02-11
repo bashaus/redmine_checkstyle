@@ -1,0 +1,49 @@
+<% files = @report.find('/checkstyle/file') %>
+
+<% if files.length == 0 %>
+	<span class="icon icon-checked">Code quality passed</span>
+<% else %>
+	<table class="list errors">
+		<thead>
+			<tr>
+				<th width="70">Line</th>
+				<th width="70">Col</th>
+				<th width="70">Severity</th>
+				<th>Details</th>
+				<th>Source</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% files.each do |file| %>
+				<% errors = file.find('./error') %>
+				<tr class="group open">
+					<td colspan="5">
+						<span class="expander" onclick="toggleRowGroup(this);">&#160;</span>
+
+						<%= file.attributes['name'] %> <span class="count">(<%= errors.length %>)</span>
+
+						<a class="toggle-all" href="#" onclick="toggleAllRowGroups(this); return false;">Collapse all/Expand all</a>
+					</td>
+				</tr>
+
+				<% errors.each do |error| %>
+					<tr class="error <%= cycle('odd', 'even') %> <%=
+						if error.attributes['severity'] == 'error'
+							"priority-4"
+						elsif error.attributes['severity'] == 'warning'
+							"priority-2" 
+						else
+							"priority-1"
+						end
+					%>">
+						<td class="line">Line <%= error.attributes['line'] %></td>
+						<td class="col">Col <%= error.attributes['column'] %></td>
+						<td class="severity"><%= error.attributes['severity'] %></td>
+						<td class="message"><%= error.attributes['message'] %></td>
+						<td class="source"><%= error.attributes['source'] %></td>
+					</tr>
+				<% end %>
+			<% end %>
+		</tbody>
+	</table>
+<% end %>
