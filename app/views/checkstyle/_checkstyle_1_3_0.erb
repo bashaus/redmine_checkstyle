@@ -1,4 +1,4 @@
-<% files = @report.find('/checkstyle/file') %>
+<% files = @report.find('/checkstyle/file[count(./error)!=0]') %>
 
 <% if files.length == 0 %>
 	<span class="icon icon-checked">Code quality passed</span>

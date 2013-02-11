@@ -14,19 +14,3 @@ if !@report.nil? then
   end
 end
 %>
-
-<% content_for :sidebar do %>  
-  <% if @severity_count.size != 0 then %>
-    <h3>Number of errors by severity</h3>
-    <% @severity_count.each do |severity| %>
-      <%= severity[:name].capitalize %> <span class="count">(<%= Integer(severity[:count]) %>)</span><br />
-    <% end %>
-  <% end %>
-
-  <% if @source_count.size != 0 then %>
-    <h3>Number of errors by source</h3>
-    <% @source_count.each do |source| %>
-      <%= source[:name] %> <span class="count">(<%= Integer(source[:count]) %>)</span><br />
-    <% end %>
-  <% end %>
-<% end %>
