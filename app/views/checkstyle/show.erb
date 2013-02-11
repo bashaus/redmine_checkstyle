@@ -7,6 +7,8 @@ if !@report.nil? then
   case @report.root.attributes['version']
   when "1.4.4"
     render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
+  when "1.3.0"
+    render(:partial => "checkstyle_1_3_0.erb", :locals => { :report => @report } )
   else
     "Don't know how to output checkstyle report version #{@report.root.attributes['version']}"
   end
