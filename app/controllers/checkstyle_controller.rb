@@ -6,22 +6,21 @@ class CheckstyleController < ApplicationController
   before_filter :find_project, :authorize
 
   def show
+    @error = ""
     @report = nil
     @severity_count = {}
     @source_count = {}
 
     checkstyle_filename = get_checkstyle_project_file(params[:project_identifier])
 
-    if !File.exists? checkstyle_filename then
-      @error_list = "Could not read checkstyle report"
-    else
-      begin
-        # Load the XML file
-        @report = XML::Document.file(checkstyle_filename)
+    begin
+      # Load the XML file
+      @report = XML::Document.file(checkstyle_filename)
 
-        @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-        @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
-      end
+      @severity_count = @report.find("//error").to_a.group_by {|d| d['severity'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+      @source_count = @report.find("//error").to_a.group_by {|d| d['source'].to_s}.map {|k,v| {:name => k, :count => v.length} }
+    rescue Exception => e  
+      @error = e.message
     end
   end
 

@@ -15,11 +15,14 @@
 <% end %>
 
 <h2>Coding</h2>
-<%= @report.inspect %>
+
+<%= @error %>
 
 <%=
-case @report.root.attributes['version']
-when "1.4.4"
-	render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
+if !@report.nil? then
+	case @report.root.attributes['version']
+	when "1.4.4"
+		render(:partial => "checkstyle_1_4_4.erb", :locals => { :report => @report } )
+	end
 end
 %>
